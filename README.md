@@ -1,3 +1,24 @@
+## ocl (indigo) - 2.8.0-1
+
+The packages in the `ocl` repository were released into the `indigo` distro by running `/usr/bin/bloom-release --track indigo --ros-distro indigo --edit ocl` on `Tue, 05 May 2015 18:34:48 -0000`
+
+The `ocl` package was released.
+
+Version of package(s) in repository `ocl`:
+- upstream repository: https://github.com/orocos-toolchain/ocl.git
+- release repository: https://github.com/orocos-gbp/ocl-release.git
+- rosdistro version: `2.8.0-0`
+- old version: `2.8.0-0`
+- new version: `2.8.0-1`
+
+Versions of tools used:
+- bloom version: `0.5.20`
+- catkin_pkg version: `0.2.8`
+- rosdep version: `0.11.2`
+- rosdistro version: `0.4.2`
+- vcstools version: `0.1.36`
+
+
 ## ocl (indigo) - 2.8.0-0
 
 The packages in the `ocl` repository were released into the `indigo` distro by running `/usr/bin/bloom-release ocl --track indigo -e -r indigo` on `Fri, 23 Jan 2015 16:08:57 -0000`
