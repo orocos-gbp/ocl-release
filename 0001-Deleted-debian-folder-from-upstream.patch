@@ -1,4 +1,4 @@
-From bb4e24a26e60351140920c7a0c0285ddda16dc26 Mon Sep 17 00:00:00 2001
+From f07ff59518224f8bb6a59fa2edac29b1b1b2862f Mon Sep 17 00:00:00 2001
 From: Johannes Meyer <johannes@intermodalics.eu>
 Date: Fri, 23 Jan 2015 17:11:36 +0100
 Subject: [PATCH] Deleted debian/ folder from upstream
