@@ -44,6 +44,8 @@
 #include <deployment/DeploymentComponent.hpp>
 #include <iostream>
 #include <string>
+#include <unistd.h>
+#include <stdio.h>
 #include "deployer-funcs.hpp"
 
 #ifdef  ORO_BUILD_LOGGING
@@ -73,6 +75,7 @@ int main(int argc, char** argv)
     OCL::memorySize             rtallocMemorySize   = ORO_DEFAULT_RTALLOC_SIZE;
 	po::options_description     rtallocOptions      = OCL::deployerRtallocOptions(rtallocMemorySize);
 	otherOptions.add(rtallocOptions);
+    OCL::TLSFMemoryPool         memoryPool;
 #endif
 
 #if     defined(ORO_BUILD_LOGGING) && defined(OROSEM_LOG4CPP_LOGGING)
@@ -123,24 +126,9 @@ int main(int argc, char** argv)
 #endif
 
 #ifdef  ORO_BUILD_RTALLOC
-    size_t                  memSize     = rtallocMemorySize.size;
-    void*                   rtMem       = 0;
-    size_t                  freeMem     = 0;
-    if (0 < memSize)
+    if (!memoryPool.initialize(rtallocMemorySize.size))
     {
-        // don't calloc() as is first thing TLSF does.
-        rtMem = malloc(memSize);
-        assert(0 != rtMem);
-        freeMem = init_memory_pool(memSize, rtMem);
-        if ((size_t)-1 == freeMem)
-        {
-            cerr << "Invalid memory pool size of " << memSize 
-                          << " bytes (TLSF has a several kilobyte overhead)." << endl;
-            free(rtMem);
-            return -1;
-        }
-        cout << "Real-time memory: " << freeMem << " bytes free of "
-                  << memSize << " allocated." << endl;
+        return -1;
     }
 #endif  // ORO_BUILD_RTALLOC
 
@@ -168,7 +156,7 @@ int main(int argc, char** argv)
                scripts stops after the first failed script, and -1 is returned.
                Whether a script failed or all scripts succeeded, in non-daemon
                and non-checking mode the TaskBrowser will be run to allow
-               inspection.
+               inspection if the input is a tty.
              */
             bool result = true;
             for (std::vector<std::string>::const_iterator iter=scriptFiles.begin();
@@ -179,12 +167,17 @@ int main(int argc, char** argv)
                 {
                     if ( (*iter).rfind(".xml",std::string::npos) == (*iter).length() - 4 || (*iter).rfind(".cpf",std::string::npos) == (*iter).length() - 4) {
                         if ( deploymentOnlyChecked ) {
-                            if (!dc.loadComponents( (*iter) )) {
+                            bool loadOk         = true;
+                            bool configureOk    = true;
+                            bool startOk        = true;
+                            if (!dc.kickStart2( (*iter), false, loadOk, configureOk, startOk )) {
                                 result = false;
-                                log(Error) << "Failed to load file: '"<< (*iter) <<"'." << endlog();
-                            } else if (!dc.configureComponents()) {
-                                result = false;
-                                log(Error) << "Failed to configure file: '"<< (*iter) <<"'." << endlog();
+                                if (!loadOk) {
+                                    log(Error) << "Failed to load file: '"<< (*iter) <<"'." << endlog();
+                                } else if (!configureOk) {
+                                    log(Error) << "Failed to configure file: '"<< (*iter) <<"'." << endlog();
+                                }
+                                (void)startOk;      // unused - avoid compiler warning
                             }
                             // else leave result=true and continue
                         } else {
@@ -203,29 +196,21 @@ int main(int argc, char** argv)
                 }
             }
             rc = (result ? 0 : -1);
+
 #ifdef USE_TASKBROWSER
             // We don't start an interactive console when we're a daemon
             if ( !deploymentOnlyChecked && !vm.count("daemon") ) {
-                OCL::TaskBrowser tb( &dc );
-
-                tb.loop();
+                if (isatty(fileno(stdin))) {
+                    OCL::TaskBrowser tb( &dc );
+                    tb.loop();
+                } else {
+                    dc.waitForInterrupt();
+                }
 
                 dc.shutdownDeployment();
             }
 #endif
         }
-#ifdef  ORO_BUILD_RTALLOC
-        if (0 != rtMem)
-            {
-                // print statistics after deployment finished, but before os_exit() (needs Logger):
-                log(Debug) << "TLSF bytes allocated=" << memSize
-                           << " overhead=" << (memSize - freeMem)
-                           << " max-used=" << get_max_size(rtMem)
-                           << " currently-used=" << get_used_size(rtMem)
-                           << " still-allocated=" << (get_used_size(rtMem) - (memSize - freeMem))
-                           << endlog();
-            }
-#endif
 
         __os_exit();
 	}
@@ -241,18 +226,7 @@ int main(int argc, char** argv)
 #endif
 
 #ifdef  ORO_BUILD_RTALLOC
-    if (0 != rtMem)
-    {
-        std::cout << "TLSF bytes allocated=" << memSize
-                  << " overhead=" << (memSize - freeMem)
-                  << " max-used=" << get_max_size(rtMem)
-                  << " currently-used=" << get_used_size(rtMem)
-                  << " still-allocated=" << (get_used_size(rtMem) - (memSize - freeMem))
-                  << "\n";
-
-        destroy_memory_pool(rtMem);
-        free(rtMem);
-    }
+    memoryPool.shutdown();
 #endif
 
     return rc;

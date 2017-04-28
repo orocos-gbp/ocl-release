@@ -37,7 +37,7 @@ IF ( BUILD_LOGGING AND LOG4CPP_FOUND )
     )
   endif()
 
-  orocos_generate_package( DEPENDS log4cpp )
+  orocos_generate_package( DEPENDS orocos-log4cpp )
   ADD_SUBDIRECTORY( tests )
 
 ENDIF ( BUILD_LOGGING  AND LOG4CPP_FOUND )
