@@ -1,0 +1,12 @@
+Source: ros-lunar-ocl
+Section: misc
+Priority: extra
+Maintainer: Orocos Developers <orocos-dev@lists.mech.kuleuven.be>
+Build-Depends: debhelper (>= 9.0.0), cmake, liblua5.1-0-dev, libncurses5-dev, libnetcdf-dev, libreadline-dev, ros-lunar-catkin, ros-lunar-log4cpp, ros-lunar-rtt
+Homepage: http://www.orocos.org/ocl
+Standards-Version: 3.9.2
+
+Package: ros-lunar-ocl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, liblua5.1-0-dev, libncurses5-dev, libnetcdf-dev, libreadline-dev, ros-lunar-catkin, ros-lunar-log4cpp, ros-lunar-rtt
+Description: Orocos component library This package contains standard components for the Orocos Toolchain
