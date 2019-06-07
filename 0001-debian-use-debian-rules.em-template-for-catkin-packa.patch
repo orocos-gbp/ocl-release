@@ -1,4 +1,4 @@
-From 29a5c3e6d8d78c5d3ad358f1c904c6e200c7b112 Mon Sep 17 00:00:00 2001
+From 75c3a23686f5c809aa571a30e033669ac120cdc4 Mon Sep 17 00:00:00 2001
 From: Johannes Meyer <johannes@intermodalics.eu>
 Date: Tue, 4 Jun 2019 11:22:04 +0200
 Subject: [PATCH] debian: use debian/rules.em template for catkin packages (set
@@ -9,7 +9,7 @@ Subject: [PATCH] debian: use debian/rules.em template for catkin packages (set
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/debian/rules.em b/debian/rules.em
-index aa010fa..9da15e8 100755
+index aa010fa..1c02dd4 100755
 --- a/debian/rules.em
 +++ b/debian/rules.em
 @@ -26,7 +26,10 @@ override_dh_auto_configure:
@@ -20,7 +20,7 @@ index aa010fa..9da15e8 100755
 +	dh_auto_configure -- \
 +		-DCATKIN_BUILD_BINARY_PACKAGE="1" \
 +		-DCMAKE_INSTALL_PREFIX="@(InstallationPrefix)" \
-+		-DCMAKE_PREFIX_PATH="@(InstallationPrefix)
++		-DCMAKE_PREFIX_PATH="@(InstallationPrefix)"
  
  override_dh_auto_build:
  	# In case we're installing to a non-standard location, look for a setup.sh
