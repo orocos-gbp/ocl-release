@@ -1,4 +1,4 @@
-From 8e8e0ce6f51401fc9b9630c00c850f56f76f4bc0 Mon Sep 17 00:00:00 2001
+From 10bdf1a1c48e0d30cdd1e20d1037573c1f9aef54 Mon Sep 17 00:00:00 2001
 From: Johannes Meyer <johannes@intermodalics.eu>
 Date: Tue, 4 Jun 2019 11:22:04 +0200
 Subject: [PATCH] debian: use debian/rules.em template for catkin packages (set
