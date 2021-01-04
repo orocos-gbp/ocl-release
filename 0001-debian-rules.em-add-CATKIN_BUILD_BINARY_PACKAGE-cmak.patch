@@ -1,4 +1,4 @@
-From af319445390fe306057a83249a9c33547a17229e Mon Sep 17 00:00:00 2001
+From 0d0840ad7b4ac16eec3d76af8d69dde3b1a19883 Mon Sep 17 00:00:00 2001
 From: Johannes Meyer <johannes@intermodalics.eu>
 Date: Mon, 4 Jan 2021 11:51:25 +0100
 Subject: [PATCH] debian/rules.em: add CATKIN_BUILD_BINARY_PACKAGE cmake
